@@ -14,7 +14,7 @@ import time
 import logging
 
 from app.core.config import settings
-from app.api.v1.endpoints import users
+from app.api.v1.endpoints import pdf
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -88,9 +88,8 @@ def create_application() -> FastAPI:
 
     # Include API routers
     app.include_router(
-        users.router,
-        prefix="/api/v1",
-        tags=["users"]
+        pdf.router,
+        prefix="/api/v1"
     )
 
     # Health check endpoint
