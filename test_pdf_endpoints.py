@@ -31,31 +31,37 @@ def test_prescription_endpoint():
         "doctor": {
             "name": "Dr. Jane Smith",
             "specialization": "General Medicine",
-            "license_number": "MD12345",
+            "qualifications": "MBBS, MD (General Medicine)",
+            "registration_number": "MD12345",
             "clinic_name": "City Medical Center",
             "clinic_address": "456 Health Ave, Medical District",
             "phone": "+1987654321",
-            "email": "dr.smith@citymedical.com"
+            "email": "dr.smith@citymedical.com",
+            "website": "www.citymedical.com"
         },
         "medications": [
             {
-                "name": "Amoxicillin",
-                "dosage": "500mg",
-                "frequency": "Three times daily",
+                "name": "Amoxicillin 500mg",
+                "dosage": "1 capsule",
+                "timing": "Three times daily",
                 "duration": "7 days",
-                "instructions": "Take with food"
+                "start_date": "2024-01-15",
+                "note": "Take with food"
             },
             {
-                "name": "Ibuprofen",
-                "dosage": "200mg",
-                "frequency": "As needed",
+                "name": "Ibuprofen 200mg",
+                "dosage": "1 tablet",
+                "timing": "As needed",
                 "duration": "5 days",
-                "instructions": "For pain relief"
+                "start_date": "2024-01-15",
+                "note": "For pain relief"
             }
         ],
-        "diagnosis": "Upper respiratory tract infection",
-        "notes": "Follow up in 1 week if symptoms persist",
-        "date": datetime.now().isoformat()
+        "symptoms": "Upper respiratory tract infection with fever and cough",
+        "advice": "Take complete rest and drink plenty of fluids",
+        "prescription_date": "2024-01-15",
+        "consult_type": "In-Person",
+        "prescription_id": "RX-2024-001"
     }
     
     try:

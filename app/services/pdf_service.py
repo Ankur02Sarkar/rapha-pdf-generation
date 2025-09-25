@@ -141,9 +141,14 @@ class PDFGenerationService:
                 "patient": prescription_data.patient,
                 "doctor": prescription_data.doctor,
                 "medications": prescription_data.medications,
-                "diagnosis": prescription_data.diagnosis,
+                "symptoms": prescription_data.symptoms,
+                "tests_suggested": prescription_data.tests_suggested,
+                "hyperlinks": prescription_data.hyperlinks,
+                "reports": prescription_data.reports,
+                "advice": prescription_data.advice,
+                "next_followup": prescription_data.next_followup,
                 "prescription_date": prescription_data.prescription_date,
-                "notes": prescription_data.notes,
+                "consult_type": prescription_data.consult_type,
                 "prescription_id": prescription_data.prescription_id,
                 "generated_at": datetime.now()
             }
@@ -156,7 +161,8 @@ class PDFGenerationService:
             
             # Create filename
             patient_name = prescription_data.patient.name.replace(" ", "_")
-            date_str = prescription_data.prescription_date.strftime("%Y%m%d")
+            # Handle date string format (e.g., "2024-01-15" or "15-01-2024")
+            date_str = prescription_data.prescription_date.replace("-", "")
             filename = f"prescription_{patient_name}_{date_str}.pdf"
             
             # Create response
