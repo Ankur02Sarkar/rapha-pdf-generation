@@ -93,19 +93,19 @@ def create_application() -> FastAPI:
     )
 
     # Health check endpoint
-    # @app.get("/health")
-    # async def health_check():
-    #     """
-    #     Health check endpoint for monitoring and load balancers.
+    @app.get("/health")
+    async def health_check():
+        """
+        Health check endpoint for monitoring and load balancers.
         
-    #     Returns:
-    #         dict: Health status information
-    #     """
-    #     return {
-    #         "status": "healthy",
-    #         "service": settings.PROJECT_NAME,
-    #         "version": settings.VERSION
-    #     }
+        Returns:
+            dict: Health status information
+        """
+        return {
+            "status": "healthy",
+            "service": settings.PROJECT_NAME,
+            "version": settings.VERSION
+        }
 
     return app
 

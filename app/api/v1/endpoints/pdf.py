@@ -178,79 +178,79 @@ async def generate_invoice_pdf(
         )
 
 
-# @router.get(
-#     "/templates/info",
-#     response_model=Dict[str, Any],
-#     status_code=status.HTTP_200_OK,
-#     summary="Get Template Information",
-#     description="Retrieve information about available PDF templates."
-# )
-# async def get_template_info() -> Dict[str, Any]:
-#     """
-#     Get information about available PDF templates.
+@router.get(
+    "/templates/info",
+    response_model=Dict[str, Any],
+    status_code=status.HTTP_200_OK,
+    summary="Get Template Information",
+    description="Retrieve information about available PDF templates."
+)
+async def get_template_info() -> Dict[str, Any]:
+    """
+    Get information about available PDF templates.
     
-#     This endpoint provides metadata about the available HTML templates
-#     used for PDF generation, including file sizes and modification dates.
+    This endpoint provides metadata about the available HTML templates
+    used for PDF generation, including file sizes and modification dates.
     
-#     Returns:
-#         Dict containing template information and metadata
+    Returns:
+        Dict containing template information and metadata
         
-#     Raises:
-#         HTTPException: If template information retrieval fails
-#     """
-#     try:
-#         template_info = pdf_service.get_template_info()
+    Raises:
+        HTTPException: If template information retrieval fails
+    """
+    try:
+        template_info = pdf_service.get_template_info()
         
-#         return success_response(
-#             data=template_info,
-#             message="Template information retrieved successfully"
-#         )
+        return success_response(
+            data=template_info,
+            message="Template information retrieved successfully"
+        )
         
-#     except Exception as e:
-#         raise HTTPException(
-#             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-#             detail=f"Failed to retrieve template information: {str(e)}"
-#         )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to retrieve template information: {str(e)}"
+        )
 
 
-# @router.get(
-#     "/health",
-#     response_model=Dict[str, Any],
-#     status_code=status.HTTP_200_OK,
-#     summary="PDF Service Health Check",
-#     description="Check the health and status of the PDF generation service."
-# )
-# async def pdf_service_health() -> Dict[str, Any]:
-#     """
-#     Check the health of the PDF generation service.
+@router.get(
+    "/health",
+    response_model=Dict[str, Any],
+    status_code=status.HTTP_200_OK,
+    summary="PDF Service Health Check",
+    description="Check the health and status of the PDF generation service."
+)
+async def pdf_service_health() -> Dict[str, Any]:
+    """
+    Check the health of the PDF generation service.
     
-#     This endpoint verifies that the PDF generation service is operational
-#     and all required dependencies are available.
+    This endpoint verifies that the PDF generation service is operational
+    and all required dependencies are available.
     
-#     Returns:
-#         Dict containing service health status and version information
-#     """
-#     try:
-#         import weasyprint
-#         import jinja2
+    Returns:
+        Dict containing service health status and version information
+    """
+    try:
+        import weasyprint
+        import jinja2
         
-#         health_data = {
-#             "service": "PDF Generation Service",
-#             "status": "healthy",
-#             "dependencies": {
-#                 "weasyprint": weasyprint.__version__,
-#                 "jinja2": jinja2.__version__
-#             },
-#             "templates": pdf_service.get_template_info()
-#         }
+        health_data = {
+            "service": "PDF Generation Service",
+            "status": "healthy",
+            "dependencies": {
+                "weasyprint": weasyprint.__version__,
+                "jinja2": jinja2.__version__
+            },
+            "templates": pdf_service.get_template_info()
+        }
         
-#         return success_response(
-#             data=health_data,
-#             message="PDF service is healthy and operational"
-#         )
+        return success_response(
+            data=health_data,
+            message="PDF service is healthy and operational"
+        )
         
-#     except Exception as e:
-#         return error_response(
-#             message=f"PDF service health check failed: {str(e)}",
-#             status_code=status.HTTP_503_SERVICE_UNAVAILABLE
-#         )
+    except Exception as e:
+        return error_response(
+            message=f"PDF service health check failed: {str(e)}",
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE
+        )
