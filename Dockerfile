@@ -1,35 +1,16 @@
-# Use the official AWS Lambda Python base image for x86_64
-FROM --platform=linux/amd64 public.ecr.aws/lambda/python:3.10
+# Use the official AWS Lambda Python runtime as a parent image
+FROM public.ecr.aws/lambda/python:3.11
 
-# Install system dependencies for WeasyPrint with specific versions
+# Install minimal system dependencies for ReportLab
 RUN yum update -y && \
     yum install -y \
-        cairo \
-        cairo-devel \
-        pango \
-        pango-devel \
-        gdk-pixbuf2 \
-        gdk-pixbuf2-devel \
-        libffi \
-        libffi-devel \
-        shared-mime-info \
-        fontconfig \
-        fontconfig-devel \
-        freetype \
+        gcc \
+        gcc-c++ \
+        make \
         freetype-devel \
-        harfbuzz \
-        harfbuzz-devel \
-        fribidi \
-        fribidi-devel \
-        dejavu-sans-fonts \
-        dejavu-serif-fonts \
-        dejavu-sans-mono-fonts && \
+        libjpeg-devel \
+        zlib-devel && \
     yum clean all
-
-# Set environment variables for proper library loading
-ENV LD_LIBRARY_PATH=/var/lang/lib:/lib64:/usr/lib64:/var/runtime:/var/runtime/lib:/var/task:/var/task/lib:/opt/lib
-ENV FONTCONFIG_PATH=/etc/fonts
-ENV FONTCONFIG_FILE=/etc/fonts/fonts.conf
 
 # Set working directory
 WORKDIR ${LAMBDA_TASK_ROOT}

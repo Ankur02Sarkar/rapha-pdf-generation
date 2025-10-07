@@ -6,11 +6,17 @@ Test script for PDF generation endpoints on AWS Lambda
 import json
 import boto3
 import base64
+import os
 from datetime import datetime
+from pathlib import Path
 
 # Configuration
 AWS_REGION = "ap-south-1"
 LAMBDA_FUNCTION_NAME = "rapha-pdf-generation-lambda"
+
+# Create output directory for PDFs
+OUTPUT_DIR = Path("generated_pdfs")
+OUTPUT_DIR.mkdir(exist_ok=True)
 
 def create_api_gateway_event(method, path, body=None):
     """Create a proper API Gateway v2.0 event for testing"""
@@ -49,6 +55,33 @@ def create_api_gateway_event(method, path, body=None):
         event["headers"]["content-length"] = str(len(event["body"]))
     
     return event
+
+def save_pdf_to_file(pdf_base64_data, filename):
+    """
+    Save base64 encoded PDF data to a local file
+    
+    Args:
+        pdf_base64_data: Base64 encoded PDF content
+        filename: Name of the file to save
+        
+    Returns:
+        str: Full path of the saved file
+    """
+    try:
+        # Decode base64 data
+        pdf_bytes = base64.b64decode(pdf_base64_data)
+        
+        # Create full file path
+        file_path = OUTPUT_DIR / filename
+        
+        # Write PDF bytes to file
+        with open(file_path, 'wb') as f:
+            f.write(pdf_bytes)
+        
+        return str(file_path)
+    except Exception as e:
+        print(f"❌ Failed to save PDF file: {str(e)}")
+        return None
 
 def test_prescription_pdf():
     """Test prescription PDF generation"""
@@ -117,6 +150,16 @@ def test_prescription_pdf():
             body = json.loads(payload['body'])
             if 'pdf_data' in body:
                 print(f"✅ PDF data received (length: {len(body['pdf_data'])} characters)")
+                
+                # Generate filename with timestamp
+                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                filename = f"prescription_john_doe_{timestamp}.pdf"
+                
+                # Save PDF to file
+                saved_path = save_pdf_to_file(body['pdf_data'], filename)
+                if saved_path:
+                    print(f"💾 PDF saved to: {saved_path}")
+                    
             return True
         else:
             print(f"❌ Unexpected status code: {payload.get('statusCode')}")
@@ -194,6 +237,16 @@ def test_invoice_pdf():
             body = json.loads(payload['body'])
             if 'pdf_data' in body:
                 print(f"✅ PDF data received (length: {len(body['pdf_data'])} characters)")
+                
+                # Generate filename with timestamp
+                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                filename = f"invoice_INV-2025-001_jane_smith_{timestamp}.pdf"
+                
+                # Save PDF to file
+                saved_path = save_pdf_to_file(body['pdf_data'], filename)
+                if saved_path:
+                    print(f"💾 PDF saved to: {saved_path}")
+                    
             return True
         else:
             print(f"❌ Unexpected status code: {payload.get('statusCode')}")
