@@ -1,0 +1,139 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'API Gateway integration for FastAPI Lambda function'
+
+Parameters:
+  LambdaFunctionName:
+    Type: String
+    Default: 'rapha-pdf-generation-lambda'
+    Description: 'Name of the Lambda function to integrate with API Gateway'
+  
+  StageName:
+    Type: String
+    Default: 'prod'
+    Description: 'API Gateway stage name'
+    
+  ApiName:
+    Type: String
+    Default: 'rapha-pdf-api'
+    Description: 'Name for the API Gateway'
+
+Resources:
+  # API Gateway REST API
+  ApiGateway:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: !Ref ApiName
+      Description: 'API Gateway for FastAPI Lambda function'
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+      Policy:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal: '*'
+            Action: 'execute-api:Invoke'
+            Resource: '*'
+
+  # API Gateway Resource for proxy integration
+  ProxyResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref ApiGateway
+      ParentId: !GetAtt ApiGateway.RootResourceId
+      PathPart: '{proxy+}'
+
+  # API Gateway Method for proxy integration
+  ProxyMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref ApiGateway
+      ResourceId: !Ref ProxyResource
+      HttpMethod: ANY
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub 
+          - 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaArn}/invocations'
+          - LambdaArn: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${LambdaFunctionName}'
+
+  # Root method for handling root path requests
+  RootMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref ApiGateway
+      ResourceId: !GetAtt ApiGateway.RootResourceId
+      HttpMethod: ANY
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub 
+          - 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaArn}/invocations'
+          - LambdaArn: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${LambdaFunctionName}'
+
+  # API Gateway Deployment
+  ApiDeployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn:
+      - ProxyMethod
+      - RootMethod
+    Properties:
+      RestApiId: !Ref ApiGateway
+      StageName: !Ref StageName
+
+  # Lambda permission for API Gateway
+  LambdaApiGatewayPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref LambdaFunctionName
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub '${ApiGateway}/*/*'
+
+  # CloudWatch Log Group for API Gateway
+  ApiGatewayLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/apigateway/${ApiName}'
+      RetentionInDays: 14
+
+  # API Gateway Account (for CloudWatch logging)
+  ApiGatewayAccount:
+    Type: AWS::ApiGateway::Account
+    Properties:
+      CloudWatchRoleArn: !GetAtt ApiGatewayCloudWatchRole.Arn
+
+  # IAM Role for API Gateway CloudWatch logging
+  ApiGatewayCloudWatchRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: apigateway.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs
+
+Outputs:
+  ApiGatewayUrl:
+    Description: 'API Gateway endpoint URL'
+    Value: !Sub 'https://${ApiGateway}.execute-api.${AWS::Region}.amazonaws.com/${StageName}'
+    Export:
+      Name: !Sub '${AWS::StackName}-ApiGatewayUrl'
+  
+  ApiGatewayId:
+    Description: 'API Gateway ID'
+    Value: !Ref ApiGateway
+    Export:
+      Name: !Sub '${AWS::StackName}-ApiGatewayId'
+  
+  ApiGatewayRootResourceId:
+    Description: 'API Gateway Root Resource ID'
+    Value: !GetAtt ApiGateway.RootResourceId
+    Export:
+      Name: !Sub '${AWS::StackName}-RootResourceId'

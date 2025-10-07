@@ -10,16 +10,29 @@
 
 ## 🎯 Current Focus
 - ✅ **COMPLETED:** Successfully transformed the API into a PDF generation service with prescription and invoice endpoints.
+- ✅ **COMPLETED:** AWS Lambda deployment configuration with Mangum adapter and containerized deployment.
 
 ## 🗺️ API Endpoint Map
-- `GET /api/v1/health` - Public (Application health check)
+- `GET /health` - Public (Application health check)
 - `POST /api/v1/pdf/prescription` - Public (Generate prescription PDF)
 - `POST /api/v1/pdf/invoice` - Public (Generate invoice PDF)
 - `GET /api/v1/pdf/health` - Public (PDF service health check)
 - `GET /api/v1/pdf/templates/info` - Public (Template information)
 
+## 🚀 AWS Lambda Deployment
+- **Lambda Function:** `rapha-pdf-generation-lambda`
+- **Runtime:** Python 3.10 (Container)
+- **Handler:** `main.handler` (Mangum adapter)
+- **Memory:** 512MB (configurable)
+- **Timeout:** 30 seconds (configurable)
+- **Architecture:** x86_64
+
 ## 📝 To-Do List (Next Actions)
-- ✅ All initial tasks completed successfully
+- ✅ All initial development tasks completed successfully
+- ✅ AWS Lambda deployment scripts and configuration completed
+- [ ] **DEPLOYMENT:** Execute `./deploy.sh` to deploy to AWS Lambda
+- [ ] **TESTING:** Run `python test_lambda_deployment.py` to validate deployment
+- [ ] **API Gateway:** Deploy CloudFormation template for API Gateway integration
 - [ ] **Future Enhancement:** Add more PDF templates (e.g., medical reports, receipts)
 - [ ] **Future Enhancement:** Implement PDF template customization options
 - [ ] **Future Enhancement:** Add PDF watermarking capabilities

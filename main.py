@@ -12,6 +12,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 import time
 import logging
+from mangum import Mangum
 
 from app.core.config import settings
 from app.api.v1.endpoints import pdf
@@ -111,6 +112,9 @@ def create_application() -> FastAPI:
 
 # Create the FastAPI application instance
 app = create_application()
+
+# AWS Lambda handler using Mangum
+handler = Mangum(app, lifespan="off")
 
 if __name__ == "__main__":
     import uvicorn
