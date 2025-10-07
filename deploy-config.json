@@ -1,0 +1,78 @@
+{
+  "environments": {
+    "development": {
+      "function_name": "rapha-pdf-generation-dev",
+      "region": "ap-south-1",
+      "runtime": "python3.11",
+      "timeout": 30,
+      "memory_size": 512,
+      "environment_variables": {
+        "ENVIRONMENT": "development",
+        "DEBUG": "true",
+        "LOG_LEVEL": "DEBUG"
+      },
+      "api_gateway": {
+        "api_name": "rapha-pdf-api-dev",
+        "stage_name": "dev"
+      }
+    },
+    "staging": {
+      "function_name": "rapha-pdf-generation-staging",
+      "region": "ap-south-1",
+      "runtime": "python3.11",
+      "timeout": 30,
+      "memory_size": 1024,
+      "environment_variables": {
+        "ENVIRONMENT": "staging",
+        "DEBUG": "true",
+        "LOG_LEVEL": "INFO"
+      },
+      "api_gateway": {
+        "api_name": "rapha-pdf-api-staging",
+        "stage_name": "staging"
+      }
+    },
+    "production": {
+      "function_name": "rapha-pdf-generation",
+      "region": "ap-south-1",
+      "runtime": "python3.11",
+      "timeout": 30,
+      "memory_size": 1024,
+      "environment_variables": {
+        "ENVIRONMENT": "production",
+        "DEBUG": "false",
+        "LOG_LEVEL": "INFO"
+      },
+      "api_gateway": {
+        "api_name": "rapha-pdf-api",
+        "stage_name": "prod"
+      }
+    }
+  },
+  "iam": {
+    "role_name_prefix": "lambda-execution-role",
+    "policy_name_prefix": "lambda-policy"
+  },
+  "layers": {
+    "python_dependencies": "weasyprint-dependencies-python",
+    "system_libraries": "weasyprint-dependencies-system",
+    "fonts": "weasyprint-dependencies-fonts"
+  },
+  "deployment": {
+    "package_excludes": [
+      "*.pyc",
+      "*/__pycache__/*",
+      "*.git*",
+      "*.env*",
+      "test_*",
+      "tests/",
+      "docs/",
+      "*.md",
+      "deploy*.sh",
+      "create-lambda-layer.sh",
+      "lambda-package/",
+      "layer-*/",
+      "*.zip"
+    ]
+  }
+}

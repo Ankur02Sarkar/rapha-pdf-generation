@@ -1,0 +1,60 @@
+# AWS Lambda Requirements
+# Optimized for Lambda deployment with minimal dependencies
+
+# Core FastAPI and ASGI
+fastapi==0.117.1
+mangum==0.18.0
+uvicorn==0.37.0
+
+# Pydantic for validation
+pydantic==2.11.9
+pydantic-core==2.33.2
+pydantic-settings==2.11.0
+
+# Essential dependencies
+starlette==0.48.0
+anyio==4.11.0
+sniffio==1.3.1
+typing-extensions==4.15.0
+
+# Template engine
+jinja2==3.1.6
+markupsafe==3.0.2
+
+# PDF generation (WeasyPrint with minimal deps)
+weasyprint==66.0
+pydyf==0.11.0
+pyphen==0.17.2
+tinycss2==1.4.0
+tinyhtml5==2.0.0
+webencodings==0.5.1
+cssselect2==0.8.0
+
+# Image processing (minimal)
+pillow==11.3.0
+
+# Font handling
+fonttools==4.60.0
+
+# Compression
+brotli==1.1.0
+zopfli==0.2.3.post1
+
+# HTTP and utilities
+requests==2.32.5
+urllib3==2.5.0
+certifi==2025.8.3
+charset-normalizer==3.4.3
+idna==3.10
+
+# Environment management
+python-dotenv==1.1.1
+
+# Security (minimal)
+cryptography==46.0.1
+cffi==2.0.0
+pycparser==2.23
+
+# Core Python utilities
+click==8.3.0
+six==1.17.0
