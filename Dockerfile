@@ -1,29 +1,38 @@
-# Use the official AWS Lambda Python runtime as a parent image
+# Use the official AWS Lambda Python 3.11 base image
 FROM public.ecr.aws/lambda/python:3.11
 
-# Install minimal system dependencies for ReportLab
+# Install system dependencies for WeasyPrint
 RUN yum update -y && \
     yum install -y \
         gcc \
         gcc-c++ \
         make \
+        cairo-devel \
+        pango-devel \
+        gdk-pixbuf2-devel \
+        libffi-devel \
+        fontconfig-devel \
         freetype-devel \
-        libjpeg-devel \
-        zlib-devel && \
+        harfbuzz-devel \
+        fribidi-devel \
+        dejavu-sans-fonts \
+        dejavu-serif-fonts \
+        dejavu-sans-mono-fonts && \
     yum clean all
 
-# Set working directory
-WORKDIR ${LAMBDA_TASK_ROOT}
+# Copy system libraries for WeasyPrint
+COPY lib/ ${LAMBDA_TASK_ROOT}/lib/
 
-# Copy requirements first for better caching
-COPY requirements.txt .
+# Set environment variables for WeasyPrint
+ENV FONTCONFIG_FILE=/etc/fonts/fonts.conf
+ENV LD_LIBRARY_PATH=${LAMBDA_TASK_ROOT}/lib:${LD_LIBRARY_PATH}
 
-# Install dependencies
-RUN pip3 install -r requirements.txt --target "${LAMBDA_TASK_ROOT}" -U --no-cache-dir
+# Copy requirements and install Python dependencies
+COPY requirements.txt ${LAMBDA_TASK_ROOT}
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy application code
-COPY ./app ${LAMBDA_TASK_ROOT}/app
-COPY main.py ${LAMBDA_TASK_ROOT}/
+# Copy the application code
+COPY app/ ${LAMBDA_TASK_ROOT}/app/
 
 # Set the CMD to your handler
-CMD [ "main.handler" ]
+CMD ["app.handler.lambda_handler"]

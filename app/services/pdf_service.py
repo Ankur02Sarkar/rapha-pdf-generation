@@ -1,29 +1,17 @@
-"""
-PDF Generation Service
+"""PDF Service Module
 
-This module provides comprehensive PDF generation functionality using ReportLab
-for prescription and invoice documents.
-"""
+This module provides PDF generation functionality using WeasyPrint.
+Supports generating prescription and invoice PDFs with HTML/CSS templates."""
 
-import base64
 import os
+import base64
 from datetime import datetime
-from pathlib import Path
-from typing import Optional, Dict, Any
-from io import BytesIO
-
-from reportlab.lib.pagesizes import letter, A4
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib.units import inch
-from reportlab.lib import colors
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image
-from reportlab.lib.enums import TA_LEFT, TA_CENTER, TA_RIGHT
-
-from app.schemas.prescription import PrescriptionRequest, PDFResponse as PrescriptionPDFResponse
-from app.schemas.invoice import InvoiceRequest, PDFResponse as InvoicePDFResponse
+from typing import Dict, Any, Optional
+from jinja2 import Template
+from weasyprint import HTML, CSS
 
 
-class PDFGenerationService:
+class PDFService:
     """
     Service class for generating PDF documents using ReportLab.
     
